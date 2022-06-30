@@ -26,6 +26,8 @@ public class Book {
     private String isbn;
     private String year;
     private String publisher;
+
+
     @ManyToMany(cascade= CascadeType.PERSIST)
     @JoinTable(
             name = "book_genre",

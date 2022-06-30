@@ -14,10 +14,14 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorService {
 
+    private final AuthorDAO authorDAO;
+    private final AuthorMapper authorMapper;
+
     @Autowired
-    private AuthorDAO authorDAO;
-    @Autowired
-    private AuthorMapper authorMapper;
+    public AuthorService(AuthorDAO authorDAO, AuthorMapper authorMapper) {
+        this.authorDAO = authorDAO;
+        this.authorMapper = authorMapper;
+    }
 
     public List<AuthorResponse> findAll() {
         return authorDAO.findAll().stream()

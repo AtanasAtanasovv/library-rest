@@ -11,12 +11,17 @@ import java.util.stream.Collectors;
 @Component
 public class BookMapper {
 
+    private final AuthorMapper authorMapper;
+    private final GenreMapper genreMapper;
+
     @Autowired
-    private AuthorMapper authorMapper;
-    @Autowired
-    private GenreMapper genreMapper;
+    public BookMapper(AuthorMapper authorMapper, GenreMapper genreMapper) {
+        this.authorMapper = authorMapper;
+        this.genreMapper = genreMapper;
+    }
 
     public Book requestToEntity(BookRequest request) {
+
         Book book = new Book();
         book.setAmount(request.getAmount());
         book.setIsbn(request.getIsbn());
@@ -28,16 +33,18 @@ public class BookMapper {
     }
 
     public BookResponse entityToResponse(Book book) {
-        return new BookResponse() {{
-            this.setId(book.getId());
-            this.setAmount(book.getAmount());
-            this.setIsbn(book.getIsbn());
-            this.setTitle(book.getTitle());
-            this.setPublisher(book.getPublisher());
-            this.setYear(book.getYear());
-            this.setAuthors(book.getAuthors().stream().map(author -> authorMapper.entityToResponse(author)).collect(Collectors.toList()));
-            this.setGenres(book.getGenres().stream().map(genre -> genreMapper.entityToResponse(genre)).collect(Collectors.toList()));
-        }};
+
+        BookResponse response=new BookResponse();
+        response.setId(book.getId());
+        response.setAmount(book.getAmount());
+        response.setIsbn(book.getIsbn());
+        response.setTitle(book.getTitle());
+        response.setPublisher(book.getPublisher());
+        response.setYear(book.getYear());
+        response.setAuthors(book.getAuthors().stream().map(author -> authorMapper.entityToResponse(author)).collect(Collectors.toList()));
+        response.setGenres(book.getGenres().stream().map(genre -> genreMapper.entityToResponse(genre)).collect(Collectors.toList()));
+
+        return response;
     }
 
 }

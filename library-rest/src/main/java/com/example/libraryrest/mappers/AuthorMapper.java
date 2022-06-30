@@ -8,22 +8,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthorMapper {
 
+    public Author requestToEntity(AuthorRequest request) {
 
-
-    public Author requestToEntity (AuthorRequest request){
-        Author author=new Author();
+        Author author = new Author();
         author.setFirstName(request.getFirstName());
         author.setLastName(request.getLastName());
+
         return author;
     }
 
-    public AuthorResponse entityToResponse (Author author){
-        return new AuthorResponse() {
-            {
-                this.setId(author.getId());
-                this.setFirstName(author.getFirstName());
-                this.setLastName(author.getLastName());
-            }
-        };
+    public AuthorResponse entityToResponse(Author author) {
+
+        AuthorResponse response = new AuthorResponse();
+        response.setId(author.getId());
+        response.setFirstName(author.getFirstName());
+        response.setLastName(author.getLastName());
+
+        return response;
     }
 }

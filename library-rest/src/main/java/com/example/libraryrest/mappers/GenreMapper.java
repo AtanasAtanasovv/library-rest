@@ -10,17 +10,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class GenreMapper {
 
+    private final GenreDAO genreDAO;
+
     @Autowired
-    private GenreDAO genreDAO;
+    public GenreMapper(GenreDAO genreDAO) {
+        this.genreDAO = genreDAO;
+    }
 
     public Genre requestToEntity (GenreRequest request){
         return genreDAO.findByName(request.getName());
     }
 
     public GenreResponse entityToResponse (Genre genre){
-        return new GenreResponse(){{
-            this.setId(genre.getId());
-            this.setName(genre.getName());
-        }};
+
+        GenreResponse response=new GenreResponse();
+        response.setId(genre.getId());
+        response.setName(genre.getName());
+
+        return response;
     }
 }

@@ -3,7 +3,11 @@ package com.example.libraryrest.dto.requests;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Data
@@ -25,7 +29,6 @@ public class BookRequest {
     @Pattern(regexp = "^[A-Z][a-z]*([-|\s][A-Z]?[a-z]*)*$")
     private String publisher;
     @NotEmpty
-    //@Min(value = 1)
     private List<Integer> genres;
     @NotEmpty
     private List<AuthorRequest> authors;

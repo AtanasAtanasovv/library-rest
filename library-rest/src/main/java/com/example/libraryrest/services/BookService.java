@@ -18,22 +18,25 @@ import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
 @Service
-//@Transactional
+@Transactional
 public class BookService {
 
+    private final BookDAO bookDAO;
+    private final AuthorDAO authorDAO;
+    private final AuthorMapper authorMapper;
+    private final BookMapper bookMapper;
+    private final GenreMapper genreMapper;
+    private final GenreDAO genreDAO;
+
     @Autowired
-    private BookDAO bookDAO;
-    @Autowired
-    private AuthorDAO authorDAO;
-    @Autowired
-    private AuthorMapper authorMapper;
-    @Autowired
-    private BookMapper bookMapper;
-    @Autowired
-    private GenreMapper genreMapper;
-    @Autowired
-    private GenreDAO genreDAO;
-    
+    public BookService(BookDAO bookDAO, AuthorDAO authorDAO, AuthorMapper authorMapper, BookMapper bookMapper, GenreMapper genreMapper, GenreDAO genreDAO) {
+        this.bookDAO = bookDAO;
+        this.authorDAO = authorDAO;
+        this.authorMapper = authorMapper;
+        this.bookMapper = bookMapper;
+        this.genreMapper = genreMapper;
+        this.genreDAO = genreDAO;
+    }
 
     public BookResponse create(BookRequest bookRequest){
         Book book=bookMapper.requestToEntity(bookRequest);

@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class GenreService {
 
+    private final GenreDAO genreDAO;
+
     @Autowired
-    private GenreDAO genreDAO;
+    public GenreService(GenreDAO genreDAO) {
+        this.genreDAO = genreDAO;
+    }
 
     public List<Genre> findAll(){
         return genreDAO.findAll();
