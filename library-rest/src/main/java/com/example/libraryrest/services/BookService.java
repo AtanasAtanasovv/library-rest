@@ -25,7 +25,6 @@ public class BookService {
     private final AuthorDAO authorDAO;
     private final AuthorMapper authorMapper;
     private final BookMapper bookMapper;
-    private final GenreMapper genreMapper;
     private final GenreDAO genreDAO;
 
     @Autowired
@@ -34,33 +33,38 @@ public class BookService {
         this.authorDAO = authorDAO;
         this.authorMapper = authorMapper;
         this.bookMapper = bookMapper;
-        this.genreMapper = genreMapper;
         this.genreDAO = genreDAO;
     }
 
-    public BookResponse create(BookRequest bookRequest){
-        Book book=bookMapper.requestToEntity(bookRequest);
+    public BookResponse create(BookRequest bookRequest) {
+        Book book = bookDAO.findByIsbn(bookRequest.getIsbn());
+        if (book == null) {
+            book = bookMapper.requestToEntity(bookRequest);
+        } else {
+            throw new IllegalArgumentException("ISBN already used");
+        }
+
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)
                 .collect(Collectors.toList()));
 
         book.setGenres(bookRequest.getGenres().stream()
-                .map(genreRequest-> genreDAO.findById(genreRequest))
+                .map(genreDAO::findById)
                 .map(genre -> genre.orElseThrow(RuntimeException::new))
                 .collect(Collectors.toList()));
         bookDAO.saveAndFlush(book);
+
         return bookMapper.entityToResponse(book);
     }
 
     private Author getAuthor(AuthorRequest authorRequest) {
         Author entity = authorDAO.findByName(authorRequest.getFirstName(), authorRequest.getLastName());
-        if (entity==null){
+        if (entity == null) {
             Author request = authorMapper.requestToEntity(authorRequest);
             entity = authorDAO.saveAndFlush(request);
         }
 
         return entity;
     }
-
 }

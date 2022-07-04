@@ -34,7 +34,7 @@ public class BookMapper {
 
     public BookResponse entityToResponse(Book book) {
 
-        BookResponse response=new BookResponse();
+        BookResponse response = new BookResponse();
         response.setId(book.getId());
         response.setAmount(book.getAmount());
         response.setIsbn(book.getIsbn());

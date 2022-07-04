@@ -17,14 +17,16 @@ public class GenreService {
         this.genreDAO = genreDAO;
     }
 
-    public List<Genre> findAll(){
+    public List<Genre> findAll() {
         return genreDAO.findAll();
     }
-    public Genre findById(int id){
+
+    public Genre findById(int id) {
 
         return genreDAO.findById(id).orElseThrow();
     }
-    public void deleteByName(String name){
+
+    public void deleteByName(String name) {
         genreDAO.deleteByName(name);
     }
 

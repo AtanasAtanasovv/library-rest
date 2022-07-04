@@ -28,14 +28,14 @@ public class Book {
     private String publisher;
 
 
-    @ManyToMany(cascade= CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
-    @ManyToMany(cascade=CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "book_author",
             joinColumns = @JoinColumn(name = "book_id"),

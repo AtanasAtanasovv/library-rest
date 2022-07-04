@@ -29,31 +29,24 @@ public class AuthorService {
                 .collect(Collectors.toList());
     }
 
-    public AuthorResponse findById(int id){
+    public AuthorResponse findById(int id) {
         Author entity = authorDAO.findById(id).orElseThrow();
         return authorMapper.entityToResponse(entity);
     }
 
-    public AuthorResponse create(AuthorRequest request){
+    public AuthorResponse create(AuthorRequest request) {
 
         Author author = authorDAO.findByName(request.getFirstName(), request.getLastName());
         if (author != null) {
             throw new IllegalArgumentException("");
-        }
-        else {
-            Author toBeCreated=authorMapper.requestToEntity(request);
+        } else {
+            Author toBeCreated = authorMapper.requestToEntity(request);
             authorDAO.saveAndFlush(toBeCreated);
             return authorMapper.entityToResponse(toBeCreated);
         }
     }
-    public AuthorResponse update(AuthorRequest request){
-        Author author=authorDAO.findByName(request.getFirstName(), request.getLastName());
-        author.setFirstName(request.getFirstName());
-        author.setLastName(request.getLastName());
-        authorDAO.saveAndFlush(author);
-        return authorMapper.entityToResponse(author);
-    }
-    public void deleteById(int id){
+
+    public void deleteById(int id) {
         authorDAO.deleteById(id);
     }
 
