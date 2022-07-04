@@ -28,9 +28,6 @@ public class Book {
     private String isbn;
     private String year;
     private String publisher;
-    private LocalDateTime dateAdded;
-    private boolean active;
-    private String deactivationReason;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
