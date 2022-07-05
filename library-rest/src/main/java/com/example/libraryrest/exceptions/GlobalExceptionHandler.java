@@ -26,6 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {BookAlreadyExistsException.class, NoSuchGenreException.class})
     public ResponseEntity<Object> handleException(RuntimeException exception) {
+
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -33,27 +34,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         Map<String, Object> body = new LinkedHashMap<>();
-
         body.put("timestamp", LocalDateTime.now());
-
         body.put("status", status.value());
-
         Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-
         body.put("errors", fieldErrors);
 
         return new ResponseEntity<>(body, headers, status);
-
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> constrainViolationException(HttpServletResponse response, ConstraintViolationException ex) throws IOException {
 
         Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
-
         List<String> messages = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
 
         return new ResponseEntity<>(messages, HttpStatus.BAD_REQUEST);
-
     }
 }
