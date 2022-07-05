@@ -15,7 +15,7 @@ public class BookRequest {
     @Min(value = 1)
     private int amount;
     @NotBlank
-    @Pattern(regexp = "^[A-Z][a-z]*(([-|\\s][A-Z])?[a-z]*)*$")
+    @Pattern(regexp = "^[A-Z][a-z]*(([-|\\s][A-Z]?)?[a-z]+)*$")
     private String title;
     @NotBlank
     @ISBN(type = ISBN.Type.ANY)
