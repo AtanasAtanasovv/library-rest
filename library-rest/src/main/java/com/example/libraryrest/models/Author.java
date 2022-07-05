@@ -18,6 +18,6 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String firstName;
-    private String lastname;
+    private String lastName;
 
 }
