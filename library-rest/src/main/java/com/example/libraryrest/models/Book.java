@@ -29,7 +29,7 @@ public class Book {
     private String year;
     private String publisher;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id"),
