@@ -40,12 +40,10 @@ public class BookService {
 
     public BookResponse create(BookRequest bookRequest) {
         Book book = bookDAO.findByIsbn(bookRequest.getIsbn());
-        if (book == null) {
-            book = bookMapper.requestToEntity(bookRequest);
-        } else {
+        if (book != null) {
             throw new BookAlreadyExistsException("This book already exists!");
         }
-
+        book=bookMapper.requestToEntity(bookRequest);
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)
