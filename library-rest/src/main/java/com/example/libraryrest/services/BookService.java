@@ -3,6 +3,8 @@ package com.example.libraryrest.services;
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
+import com.example.libraryrest.exceptions.BookAlreadyExistsException;
+import com.example.libraryrest.exceptions.NoSuchGenreException;
 import com.example.libraryrest.mappers.AuthorMapper;
 import com.example.libraryrest.mappers.BookMapper;
 import com.example.libraryrest.mappers.GenreMapper;
@@ -41,7 +43,7 @@ public class BookService {
         if (book == null) {
             book = bookMapper.requestToEntity(bookRequest);
         } else {
-            throw new IllegalArgumentException("ISBN already used");
+            throw new BookAlreadyExistsException("This book already exists!");
         }
 
 
@@ -51,7 +53,7 @@ public class BookService {
 
         book.setGenres(bookRequest.getGenres().stream()
                 .map(genreDAO::findById)
-                .map(genre -> genre.orElseThrow(RuntimeException::new))
+                .map(genre -> genre.orElseThrow(()->new NoSuchGenreException("There is no such genre!")))
                 .collect(Collectors.toList()));
         bookDAO.saveAndFlush(book);
 
