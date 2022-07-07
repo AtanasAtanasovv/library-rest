@@ -13,6 +13,8 @@ import com.example.libraryrest.models.Book;
 import com.example.libraryrest.repositories.AuthorDAO;
 import com.example.libraryrest.repositories.BookDAO;
 import com.example.libraryrest.repositories.GenreDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class BookService {
+
+    private final Logger logger = LoggerFactory.getLogger(BookService.class);
 
     private final BookDAO bookDAO;
     private final AuthorDAO authorDAO;
@@ -39,11 +43,13 @@ public class BookService {
     }
 
     public BookResponse create(BookRequest bookRequest) {
+        logger.info("Create book method.");
         Book book = bookDAO.findByIsbn(bookRequest.getIsbn());
         if (book != null) {
+            logger.error("This book with isbn: {} already exists!", bookRequest.getIsbn());
             throw new BookAlreadyExistsException("This book already exists!");
         }
-        book=bookMapper.requestToEntity(bookRequest);
+        book = bookMapper.requestToEntity(bookRequest);
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)
@@ -51,7 +57,7 @@ public class BookService {
 
         book.setGenres(bookRequest.getGenres().stream()
                 .map(genreDAO::findById)
-                .map(genre -> genre.orElseThrow(()->new NoSuchGenreException("There is no such genre!")))
+                .map(genre -> genre.orElseThrow(() -> new NoSuchGenreException("There is no such genre!")))
                 .collect(Collectors.toList()));
         bookDAO.saveAndFlush(book);
 
@@ -59,6 +65,7 @@ public class BookService {
     }
 
     private Author getAuthor(AuthorRequest authorRequest) {
+        logger.info("Get author method.");
         Author entity = authorDAO.findByName(authorRequest.getFirstName(), authorRequest.getLastName());
         if (entity == null) {
             Author request = authorMapper.requestToEntity(authorRequest);

@@ -3,6 +3,8 @@ package com.example.libraryrest.mappers;
 import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.models.Book;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class BookMapper {
+
+    private final Logger logger = LoggerFactory.getLogger(BookMapper.class);
 
     private final AuthorMapper authorMapper;
     private final GenreMapper genreMapper;
@@ -21,7 +25,7 @@ public class BookMapper {
     }
 
     public Book requestToEntity(BookRequest request) {
-
+        logger.info("Request to entity method.");
         Book book = new Book();
         book.setAmount(request.getAmount());
         book.setIsbn(request.getIsbn());
@@ -33,7 +37,7 @@ public class BookMapper {
     }
 
     public BookResponse entityToResponse(Book book) {
-
+        logger.info("Entity to response method.");
         BookResponse response = new BookResponse();
         response.setId(book.getId());
         response.setAmount(book.getAmount());
