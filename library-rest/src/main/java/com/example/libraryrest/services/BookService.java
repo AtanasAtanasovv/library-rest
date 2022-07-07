@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +50,9 @@ public class BookService {
             logger.error("This book with isbn: {} already exists!", bookRequest.getIsbn());
             throw new BookAlreadyExistsException("This book already exists!");
         }
-        book = bookMapper.requestToEntity(bookRequest);
+
+        book=bookMapper.requestToEntity(bookRequest);
+        book.setDateAdded(LocalDateTime.now());
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)

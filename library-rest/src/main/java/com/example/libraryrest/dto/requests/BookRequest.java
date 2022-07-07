@@ -3,10 +3,12 @@ package com.example.libraryrest.dto.requests;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -30,5 +32,5 @@ public class BookRequest {
     private List<Integer> genres;
     @NotEmpty
     private List<AuthorRequest> authors;
-
+    private String language;
 }
