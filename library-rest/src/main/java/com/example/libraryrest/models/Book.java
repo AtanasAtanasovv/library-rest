@@ -1,10 +1,13 @@
 package com.example.libraryrest.models;
 
+import com.example.libraryrest.enums.Status;
 import lombok.Data;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +33,8 @@ public class Book {
     private String isbn;
     private String year;
     private String publisher;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @Column(name = "date_added")
     private LocalDateTime dateAdded;
     @Column(name = "deactivation_date")
@@ -37,7 +42,6 @@ public class Book {
     private String language;
     @Column(name = "deactivation_description")
     private String deactivationDescription;
-
 
     @ManyToMany
     @JoinTable(

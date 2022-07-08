@@ -1,5 +1,7 @@
 package com.example.libraryrest.dto.requests;
 
+import com.example.libraryrest.enums.Status;
+import com.example.libraryrest.models.Book;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 

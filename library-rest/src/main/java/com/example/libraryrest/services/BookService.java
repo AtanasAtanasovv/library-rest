@@ -3,6 +3,7 @@ package com.example.libraryrest.services;
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
+import com.example.libraryrest.enums.Status;
 import com.example.libraryrest.exceptions.BookAlreadyExistsException;
 import com.example.libraryrest.exceptions.NoSuchGenreException;
 import com.example.libraryrest.mappers.AuthorMapper;
@@ -53,6 +54,7 @@ public class BookService {
 
         book=bookMapper.requestToEntity(bookRequest);
         book.setDateAdded(LocalDateTime.now());
+        book.setStatus(Status.ACTIVE);
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)

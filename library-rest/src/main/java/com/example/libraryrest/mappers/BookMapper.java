@@ -48,6 +48,7 @@ public class BookMapper {
         response.setYear(book.getYear());
         response.setLanguage(book.getLanguage());
         response.setDateAdded(book.getDateAdded());
+        response.setStatus(book.getStatus());
         response.setAuthors(book.getAuthors().stream().map(author -> authorMapper.entityToResponse(author)).collect(Collectors.toList()));
         response.setGenres(book.getGenres().stream().map(genre -> genreMapper.entityToResponse(genre)).collect(Collectors.toList()));
 
