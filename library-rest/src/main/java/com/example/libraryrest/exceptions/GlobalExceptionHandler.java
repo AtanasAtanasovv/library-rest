@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {BookAlreadyExistsException.class, NoSuchGenreException.class})
+    @ExceptionHandler(value = {BookAlreadyExistsException.class, NoSuchGenreException.class, BookNotFoundException.class})
     public ResponseEntity<Object> handleException(RuntimeException exception) {
 
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);

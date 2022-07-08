@@ -2,8 +2,10 @@ package com.example.libraryrest.services;
 
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
+import com.example.libraryrest.dto.requests.UpdateBookYearRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.exceptions.BookAlreadyExistsException;
+import com.example.libraryrest.exceptions.BookNotFoundException;
 import com.example.libraryrest.exceptions.NoSuchGenreException;
 import com.example.libraryrest.mappers.AuthorMapper;
 import com.example.libraryrest.mappers.BookMapper;
@@ -73,5 +75,12 @@ public class BookService {
         }
 
         return entity;
+    }
+
+    public BookResponse updateYear(int id, UpdateBookYearRequest request){
+        Book book = bookDAO.findById(id).orElseThrow(()->new BookNotFoundException("Book has not been found!"));
+        book.setYear(request.getYear());
+        BookResponse response=bookMapper.entityToResponse(bookDAO.save(book));
+        return response;
     }
 }
