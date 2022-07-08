@@ -30,5 +30,5 @@ public class BookRequest {
     private List<Integer> genres;
     @NotEmpty
     private List<AuthorRequest> authors;
-
+    private String language;
 }

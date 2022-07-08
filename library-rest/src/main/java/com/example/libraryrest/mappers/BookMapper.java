@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.stream.Collectors;
 
 @Component
@@ -32,6 +31,7 @@ public class BookMapper {
         book.setPublisher(request.getPublisher());
         book.setTitle(request.getTitle());
         book.setYear(request.getYear());
+        book.setLanguage(request.getLanguage());
 
         return book;
     }
@@ -45,6 +45,9 @@ public class BookMapper {
         response.setTitle(book.getTitle());
         response.setPublisher(book.getPublisher());
         response.setYear(book.getYear());
+        response.setLanguage(book.getLanguage());
+        response.setDateAdded(book.getDateAdded());
+        response.setStatus(book.getStatus());
         response.setAuthors(book.getAuthors().stream().map(author -> authorMapper.entityToResponse(author)).collect(Collectors.toList()));
         response.setGenres(book.getGenres().stream().map(genre -> genreMapper.entityToResponse(genre)).collect(Collectors.toList()));
 

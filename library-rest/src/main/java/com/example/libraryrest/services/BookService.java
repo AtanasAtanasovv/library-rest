@@ -3,6 +3,7 @@ package com.example.libraryrest.services;
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
+import com.example.libraryrest.enums.Status;
 import com.example.libraryrest.exceptions.BookAlreadyExistsException;
 import com.example.libraryrest.exceptions.NoSuchGenreException;
 import com.example.libraryrest.mappers.AuthorMapper;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +51,10 @@ public class BookService {
             logger.error("This book with isbn: {} already exists!", bookRequest.getIsbn());
             throw new BookAlreadyExistsException("This book already exists!");
         }
-        book = bookMapper.requestToEntity(bookRequest);
+
+        book=bookMapper.requestToEntity(bookRequest);
+        book.setDateAdded(LocalDateTime.now());
+        book.setStatus(Status.ACTIVE);
 
         book.setAuthors(bookRequest.getAuthors().stream()
                 .map(this::getAuthor)

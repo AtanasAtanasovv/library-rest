@@ -1,7 +1,10 @@
 package com.example.libraryrest.dto.responses;
 
+import com.example.libraryrest.enums.Status;
 import lombok.Data;
 
+import javax.persistence.Column;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -15,5 +18,8 @@ public class BookResponse {
     private String publisher;
     private List<AuthorResponse> authors;
     private List<GenreResponse> genres;
+    private LocalDateTime dateAdded;
+    private String language;
+    private Status status;
 
 }
