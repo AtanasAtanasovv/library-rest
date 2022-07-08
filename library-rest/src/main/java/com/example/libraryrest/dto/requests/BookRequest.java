@@ -1,16 +1,12 @@
 package com.example.libraryrest.dto.requests;
 
-import com.example.libraryrest.enums.Status;
-import com.example.libraryrest.models.Book;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
