@@ -28,17 +28,17 @@ public class BookController {
         return ResponseEntity.ok(bookService.create(request));
     }
 
-    @PutMapping("/books/update/year/{id}")
+    @PutMapping("/books/year/{id}")
     ResponseEntity<BookResponse> updateYear(@PathVariable int id, @Valid @RequestBody UpdateYearRequest request) {
         return ResponseEntity.ok(bookService.updateYear(id, request));
     }
 
-    @PutMapping("/books/update/publisher/{id}")
+    @PutMapping("/books/publisher/{id}")
     ResponseEntity<BookResponse> updatePublisher(@PathVariable int id, @Valid @RequestBody UpdatePublisherRequest request) {
         return ResponseEntity.ok(bookService.updatePublisher(id, request));
     }
 
-    @PutMapping("/books/update/amount/{id}")
+    @PutMapping("/books/amount/{id}")
     ResponseEntity<BookResponse> updateAmount(@PathVariable int id, @Valid @RequestBody UpdateAmountRequest request) {
         return ResponseEntity.ok(bookService.updateAmount(id, request));
     }
