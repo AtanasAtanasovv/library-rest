@@ -134,6 +134,7 @@ public class BookService {
         book.setDeactivationReason(deactivationReason);
         book.setDeactivationDescription(request.getDeactivationDescription());
         book.setStatus(Status.INACTIVE);
+        book.setDeactivationDate(LocalDateTime.now());
         BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
 
         return response;
