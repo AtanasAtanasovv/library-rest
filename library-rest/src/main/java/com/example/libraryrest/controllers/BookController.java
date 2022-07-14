@@ -2,7 +2,10 @@ package com.example.libraryrest.controllers;
 
 import com.example.libraryrest.dto.requests.BookFilterRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
-import com.example.libraryrest.dto.requests.UpdateBookYearRequest;
+import com.example.libraryrest.dto.requests.UpdateAmountRequest;
+import com.example.libraryrest.dto.requests.UpdateStatusRequest;
+import com.example.libraryrest.dto.requests.UpdateYearRequest;
+import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,24 @@ public class BookController {
     ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest request) {
         return ResponseEntity.ok(bookService.create(request));
     }
-    @PutMapping("/books/{id}")
-    ResponseEntity<BookResponse> updateYear(@PathVariable int id, @RequestBody UpdateBookYearRequest request){
-        return ResponseEntity.ok(bookService.updateYear(id,request));
+
+    @PutMapping("/books/year/{id}")
+    ResponseEntity<BookResponse> updateYear(@PathVariable int id, @Valid @RequestBody UpdateYearRequest request) {
+        return ResponseEntity.ok(bookService.updateYear(id, request));
+    }
+
+    @PutMapping("/books/publisher/{id}")
+    ResponseEntity<BookResponse> updatePublisher(@PathVariable int id, @Valid @RequestBody UpdatePublisherRequest request) {
+        return ResponseEntity.ok(bookService.updatePublisher(id, request));
+    }
+
+    @PutMapping("/books/amount/{id}")
+    ResponseEntity<BookResponse> updateAmount(@PathVariable int id, @Valid @RequestBody UpdateAmountRequest request) {
+        return ResponseEntity.ok(bookService.updateAmount(id, request));
+    }
+
+    @PutMapping("books/deactivate/{id}")
+    ResponseEntity<BookResponse> deactivateBook(@PathVariable int id, @Valid @RequestBody UpdateStatusRequest request) {
+        return ResponseEntity.ok(bookService.deactivateBook(id, request));
     }
 }
