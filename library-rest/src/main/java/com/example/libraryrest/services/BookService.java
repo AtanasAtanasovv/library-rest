@@ -2,17 +2,26 @@ package com.example.libraryrest.services;
 
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
+import com.example.libraryrest.dto.requests.UpdateAmountRequest;
+import com.example.libraryrest.dto.requests.UpdateStatusRequest;
+import com.example.libraryrest.dto.requests.UpdateYearRequest;
+import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.enums.Status;
 import com.example.libraryrest.exceptions.BookAlreadyExistsException;
+import com.example.libraryrest.exceptions.BookInactiveException;
+import com.example.libraryrest.exceptions.BookNotFoundException;
+import com.example.libraryrest.exceptions.InvalidDeactivationReasonException;
 import com.example.libraryrest.exceptions.NoSuchGenreException;
 import com.example.libraryrest.mappers.AuthorMapper;
 import com.example.libraryrest.mappers.BookMapper;
 import com.example.libraryrest.mappers.GenreMapper;
 import com.example.libraryrest.models.Author;
 import com.example.libraryrest.models.Book;
+import com.example.libraryrest.models.DeactivationReason;
 import com.example.libraryrest.repositories.AuthorDAO;
 import com.example.libraryrest.repositories.BookDAO;
+import com.example.libraryrest.repositories.DeactivationReasonDAO;
 import com.example.libraryrest.repositories.GenreDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +43,16 @@ public class BookService {
     private final AuthorMapper authorMapper;
     private final BookMapper bookMapper;
     private final GenreDAO genreDAO;
+    private final DeactivationReasonDAO deactivationReasonDAO;
 
     @Autowired
-    public BookService(BookDAO bookDAO, AuthorDAO authorDAO, AuthorMapper authorMapper, BookMapper bookMapper, GenreMapper genreMapper, GenreDAO genreDAO) {
+    public BookService(BookDAO bookDAO, AuthorDAO authorDAO, AuthorMapper authorMapper, BookMapper bookMapper, GenreMapper genreMapper, GenreDAO genreDAO, DeactivationReasonDAO deactivationReasonDAO) {
         this.bookDAO = bookDAO;
         this.authorDAO = authorDAO;
         this.authorMapper = authorMapper;
         this.bookMapper = bookMapper;
         this.genreDAO = genreDAO;
+        this.deactivationReasonDAO = deactivationReasonDAO;
     }
 
     public BookResponse create(BookRequest bookRequest) {
@@ -52,7 +63,7 @@ public class BookService {
             throw new BookAlreadyExistsException("This book already exists!");
         }
 
-        book=bookMapper.requestToEntity(bookRequest);
+        book = bookMapper.requestToEntity(bookRequest);
         book.setDateAdded(LocalDateTime.now());
         book.setStatus(Status.ACTIVE);
 
@@ -78,5 +89,66 @@ public class BookService {
         }
 
         return entity;
+    }
+
+    public BookResponse updateYear(int id, UpdateYearRequest request) {
+
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
+        Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException("Book has not been found!"));
+        if (book.getStatus() != Status.ACTIVE) {
+            throw new BookInactiveException("This book is not active!");
+        }
+        book.setYear(request.getYear());
+        BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
+
+        return response;
+    }
+
+    public BookResponse updatePublisher(int id, UpdatePublisherRequest request) {
+
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
+        Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
+        if (book.getStatus() != Status.ACTIVE) {
+            throw new BookInactiveException("This book is not active!");
+        }
+        book.setPublisher(request.getPublisher());
+        BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
+
+        return response;
+    }
+
+    public BookResponse updateAmount(int id, UpdateAmountRequest request) {
+
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
+        Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
+        if (book.getStatus() != Status.ACTIVE) {
+            throw new BookInactiveException("This book is not active!");
+        }
+        book.setAmount(request.getAmount());
+        BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
+
+        return response;
+    }
+
+    public BookResponse deactivateBook(int id, UpdateStatusRequest request) {
+
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
+        Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
+        DeactivationReason deactivationReason = deactivationReasonDAO.findById(request.getId()).orElseThrow(() -> new InvalidDeactivationReasonException("Reason invalid!"));
+        book.setDeactivationReason(deactivationReason);
+        book.setDeactivationDescription(request.getDeactivationDescription());
+        book.setStatus(Status.INACTIVE);
+        book.setDeactivationDate(LocalDateTime.now());
+        BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
+
+        return response;
     }
 }

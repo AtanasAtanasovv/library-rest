@@ -1,6 +1,7 @@
 package com.example.libraryrest.dto.responses;
 
 import com.example.libraryrest.enums.Status;
+import com.example.libraryrest.models.DeactivationReason;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -21,5 +22,8 @@ public class BookResponse {
     private LocalDateTime dateAdded;
     private String language;
     private Status status;
+    private LocalDateTime deactivationDate;
+    private String deactivationDescription;
+    private DeactivationReason deactivationReason;
 
 }
