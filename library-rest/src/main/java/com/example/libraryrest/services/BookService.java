@@ -93,6 +93,9 @@ public class BookService {
 
     public BookResponse updateYear(int id, UpdateYearRequest request) {
 
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException("Book has not been found!"));
         if (book.getStatus() != Status.ACTIVE) {
             throw new BookInactiveException("This book is not active!");
@@ -105,6 +108,9 @@ public class BookService {
 
     public BookResponse updatePublisher(int id, UpdatePublisherRequest request) {
 
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
         if (book.getStatus() != Status.ACTIVE) {
             throw new BookInactiveException("This book is not active!");
@@ -117,6 +123,9 @@ public class BookService {
 
     public BookResponse updateAmount(int id, UpdateAmountRequest request) {
 
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
         if (book.getStatus() != Status.ACTIVE) {
             throw new BookInactiveException("This book is not active!");
@@ -129,6 +138,9 @@ public class BookService {
 
     public BookResponse deactivateBook(int id, UpdateStatusRequest request) {
 
+        if (id != request.getId()) {
+            throw new RuntimeException("Discrepancy between ids");
+        }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
         DeactivationReason deactivationReason = deactivationReasonDAO.findById(request.getId()).orElseThrow(() -> new InvalidDeactivationReasonException("Reason invalid!"));
         book.setDeactivationReason(deactivationReason);

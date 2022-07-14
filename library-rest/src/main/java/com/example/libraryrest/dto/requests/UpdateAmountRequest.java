@@ -7,5 +7,7 @@ import javax.validation.constraints.Min;
 @Data
 public class UpdateAmountRequest {
     @Min(value = 1)
+    private int id;
+    @Min(value = 1)
     private int amount;
 }
