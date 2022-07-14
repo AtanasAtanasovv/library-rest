@@ -30,7 +30,7 @@ public class BookMapper {
         book.setIsbn(request.getIsbn());
         book.setPublisher(request.getPublisher());
         book.setTitle(request.getTitle());
-        book.setYear(request.getYear());
+        book.setYear(Short.parseShort(request.getYear()));
         book.setLanguage(request.getLanguage());
 
         return book;

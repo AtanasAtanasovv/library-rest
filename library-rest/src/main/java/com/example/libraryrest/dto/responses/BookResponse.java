@@ -14,7 +14,7 @@ public class BookResponse {
     private int amount;
     private String title;
     private String isbn;
-    private String year;
+    private Short year;
     private String publisher;
     private List<AuthorResponse> authors;
     private List<GenreResponse> genres;
