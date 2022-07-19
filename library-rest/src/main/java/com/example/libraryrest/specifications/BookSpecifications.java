@@ -34,20 +34,11 @@ public class BookSpecifications {
         return (root, query, builder) -> builder.between(root.get("year"), yearFrom, yearTo);
     }
 
-    public static Specification<Book> authorName(String name, int index) {
-        switch (index) {
-            case 1:
+    public static Specification<Book> authorName(String name, String fieldName) {
                 return (root, query, builder) -> {
                     ListJoin<Book, Author> authorJoin = root.joinList("authors");
-                    return builder.in(authorJoin.get("firstName")).value(name);
+                    return builder.in(authorJoin.get(fieldName)).value(name);
                 };
-            case 2:
-                return (root, query, builder) -> {
-                    ListJoin<Book, Author> authorJoin = root.joinList("authors");
-                    return builder.in(authorJoin.get("lastName")).value(name);
-                };
-            default:
-                return null;
-        }
+
     }
 }

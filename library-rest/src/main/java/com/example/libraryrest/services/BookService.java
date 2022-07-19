@@ -3,10 +3,13 @@ package com.example.libraryrest.services;
 import com.example.libraryrest.dto.requests.AuthorRequest;
 import com.example.libraryrest.dto.requests.BookFilterRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
+import com.example.libraryrest.dto.requests.PaginationRequest;
+import com.example.libraryrest.dto.requests.SortRequest;
 import com.example.libraryrest.dto.requests.UpdateAmountRequest;
 import com.example.libraryrest.dto.requests.UpdateStatusRequest;
 import com.example.libraryrest.dto.requests.UpdateYearRequest;
 import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
+import com.example.libraryrest.dto.responses.BookFilterResponse;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.enums.Status;
 import com.example.libraryrest.exceptions.BookAlreadyExistsException;
@@ -28,6 +31,9 @@ import com.example.libraryrest.specifications.BookSpecifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -61,35 +67,35 @@ public class BookService {
         this.deactivationReasonDAO = deactivationReasonDAO;
     }
 
-    public List<BookResponse> getFiltered(BookFilterRequest request){
+    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest){
 
         List<Specification<Book>> specifications=new ArrayList<>();
 
-        if (request.getPublisher()!=null){
-            specifications.add(BookSpecifications.publisherLike(request.getPublisher()));
+        if (filterRequest.getPublisher()!=null){
+            specifications.add(BookSpecifications.publisherLike(filterRequest.getPublisher()));
         }
-        if (request.getTitle()!=null){
-            specifications.add(BookSpecifications.titleLike(request.getTitle()));
+        if (filterRequest.getTitle()!=null){
+            specifications.add(BookSpecifications.titleLike(filterRequest.getTitle()));
         }
-        if (request.getStatus()!=null){
-            specifications.add(BookSpecifications.checkStatus(request.getStatus()));
+        if (filterRequest.getStatus()!=null){
+            specifications.add(BookSpecifications.checkStatus(filterRequest.getStatus()));
         }
-        if (request.getYearFrom()!=null&&request.getYearTo()!=null){
-            specifications.add(BookSpecifications.betweenYears(request.getYearFrom(), request.getYearTo()));
+        if (filterRequest.getYearFrom()!=null&&filterRequest.getYearTo()!=null){
+            specifications.add(BookSpecifications.betweenYears(filterRequest.getYearFrom(), filterRequest.getYearTo()));
         }
         else {
-            if (request.getYearFrom()!=null){
-                specifications.add(BookSpecifications.yearFrom(request.getYearFrom()));
+            if (filterRequest.getYearFrom()!=null){
+                specifications.add(BookSpecifications.yearFrom(filterRequest.getYearFrom()));
             }
-            if (request.getYearTo()!=null){
-                specifications.add(BookSpecifications.yearTo(request.getYearTo()));
+            if (filterRequest.getYearTo()!=null){
+                specifications.add(BookSpecifications.yearTo(filterRequest.getYearTo()));
             }
         }
-        if (request.getAuthor()!=null){
-            String firstName= request.getAuthor().trim().split(" ")[0];
-            String lastName = request.getAuthor().trim().split(" ")[1];
-            specifications.add(BookSpecifications.authorName(firstName,1));
-            specifications.add(BookSpecifications.authorName(lastName,2));
+        if (filterRequest.getAuthor()!=null){
+            String firstName= filterRequest.getAuthor().trim().split(" ")[0];
+            String lastName = filterRequest.getAuthor().trim().split(" ")[1];
+            specifications.add(BookSpecifications.authorName(firstName,"firstName"));
+            specifications.add(BookSpecifications.authorName(lastName,"lastName"));
         }
 
 
@@ -100,9 +106,20 @@ public class BookService {
                 spec=spec.and(specifications.get(i));
             }
         }
-        List<BookResponse> response= bookDAO.findAll(spec).stream().map(bookMapper::entityToResponse).toList();
 
-        return response;
+        Pageable pageable;
+
+        switch (sortRequest.getSortDirection()){
+            case "ASCENDING" : pageable=PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).ascending());break;
+            case "DESCENDING" : pageable=PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(),Sort.by(sortRequest.getSortField()).descending());break;
+            default: throw new RuntimeException("Invalid sort direction!");
+        }
+
+        List<BookResponse> bookResponses= bookDAO.findAll(spec,pageable).stream().map(bookMapper::entityToResponse).toList();
+
+        BookFilterResponse bookFilterResponse= new BookFilterResponse(filterRequest,paginationRequest,sortRequest,bookResponses);
+
+        return bookFilterResponse;
     }
 
     public BookResponse create(BookRequest bookRequest) {

@@ -2,10 +2,13 @@ package com.example.libraryrest.controllers;
 
 import com.example.libraryrest.dto.requests.BookFilterRequest;
 import com.example.libraryrest.dto.requests.BookRequest;
+import com.example.libraryrest.dto.requests.PaginationRequest;
+import com.example.libraryrest.dto.requests.SortRequest;
 import com.example.libraryrest.dto.requests.UpdateAmountRequest;
 import com.example.libraryrest.dto.requests.UpdateStatusRequest;
 import com.example.libraryrest.dto.requests.UpdateYearRequest;
 import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
+import com.example.libraryrest.dto.responses.BookFilterResponse;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +30,8 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping("/books")
-    ResponseEntity<List<BookResponse>> filterBooks (BookFilterRequest request){
-        return ResponseEntity.ok(bookService.getFiltered(request));
+    ResponseEntity<BookFilterResponse> filterBooks (BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest){
+        return ResponseEntity.ok(bookService.getFiltered(filterRequest,paginationRequest,sortRequest));
     }
     @PostMapping("/books")
     ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest request) {
