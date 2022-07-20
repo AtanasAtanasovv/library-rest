@@ -6,9 +6,9 @@ import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.requests.PaginationRequest;
 import com.example.libraryrest.dto.requests.SortRequest;
 import com.example.libraryrest.dto.requests.UpdateAmountRequest;
+import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.requests.UpdateStatusRequest;
 import com.example.libraryrest.dto.requests.UpdateYearRequest;
-import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.responses.BookFilterResponse;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.enums.Status;
@@ -31,13 +31,13 @@ import com.example.libraryrest.specifications.BookSpecifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.swing.plaf.basic.BasicViewportUI;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,35 +67,30 @@ public class BookService {
         this.deactivationReasonDAO = deactivationReasonDAO;
     }
 
-    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest){
+    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest) {
+        logger.info("Get filtered books method.");
+        List<Specification<Book>> specifications = new ArrayList<>();
 
-        List<Specification<Book>> specifications=new ArrayList<>();
-
-        if (filterRequest.getPublisher()!=null){
+        if (filterRequest.getPublisher() != null) {
             specifications.add(BookSpecifications.publisherLike(filterRequest.getPublisher()));
         }
-        if (filterRequest.getTitle()!=null){
+        if (filterRequest.getTitle() != null) {
             specifications.add(BookSpecifications.titleLike(filterRequest.getTitle()));
         }
-        if (filterRequest.getStatus()!=null){
+        if (filterRequest.getStatus() != null) {
             specifications.add(BookSpecifications.checkStatus(filterRequest.getStatus()));
         }
-        if (filterRequest.getYearFrom()!=null&&filterRequest.getYearTo()!=null){
-            specifications.add(BookSpecifications.betweenYears(filterRequest.getYearFrom(), filterRequest.getYearTo()));
+        if (filterRequest.getYearFrom() != null) {
+            specifications.add(BookSpecifications.yearFrom(filterRequest.getYearFrom()));
         }
-        else {
-            if (filterRequest.getYearFrom()!=null){
-                specifications.add(BookSpecifications.yearFrom(filterRequest.getYearFrom()));
-            }
-            if (filterRequest.getYearTo()!=null){
-                specifications.add(BookSpecifications.yearTo(filterRequest.getYearTo()));
-            }
+        if (filterRequest.getYearTo() != null) {
+            specifications.add(BookSpecifications.yearTo(filterRequest.getYearTo()));
         }
-        if (filterRequest.getAuthor()!=null){
-            String firstName= filterRequest.getAuthor().trim().split(" ")[0];
-            String lastName = filterRequest.getAuthor().trim().split(" ")[1];
-            specifications.add(BookSpecifications.authorName(firstName,"firstName"));
-            specifications.add(BookSpecifications.authorName(lastName,"lastName"));
+        if (filterRequest.getAuthorFirstName()!=null){
+            specifications.add(BookSpecifications.authorName(filterRequest.getAuthorFirstName(), "firstName"));
+        }
+        if (filterRequest.getAuthorLastName()!=null){
+            specifications.add(BookSpecifications.authorName(filterRequest.getAuthorLastName(), "lastName"));
         }
 
 
@@ -103,21 +98,28 @@ public class BookService {
         if (!specifications.isEmpty()) {
             spec = specifications.get(0);
             for (int i = 1; i < specifications.size(); i++) {
-                spec=spec.and(specifications.get(i));
+                spec = spec.and(specifications.get(i));
             }
         }
 
         Pageable pageable;
 
-        switch (sortRequest.getSortDirection()){
-            case "ASCENDING" : pageable=PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).ascending());break;
-            case "DESCENDING" : pageable=PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(),Sort.by(sortRequest.getSortField()).descending());break;
-            default: throw new RuntimeException("Invalid sort direction!");
+        switch (sortRequest.getSortDirection()) {
+            case "ASCENDING":
+                pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).ascending());
+                break;
+            case "DESCENDING":
+                pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).descending());
+                break;
+            default:
+                logger.error("Invalid sort direction.");
+                throw new RuntimeException("Invalid sort direction!");
         }
 
-        List<BookResponse> bookResponses= bookDAO.findAll(spec,pageable).stream().map(bookMapper::entityToResponse).toList();
+        Page<Book> page = bookDAO.findAll(spec, pageable);
+        List<BookResponse> bookResponses = page.getContent().stream().map(bookMapper::entityToResponse).toList();
 
-        BookFilterResponse bookFilterResponse= new BookFilterResponse(filterRequest,paginationRequest,sortRequest,bookResponses);
+        BookFilterResponse bookFilterResponse = new BookFilterResponse(page.getNumber(), page.getSize(), page.getTotalElements(), bookResponses);
 
         return bookFilterResponse;
     }
@@ -159,8 +161,9 @@ public class BookService {
     }
 
     public BookResponse updateYear(int id, UpdateYearRequest request) {
-
+        logger.info("Update year method.");
         if (id != request.getId()) {
+            logger.error("Discrepancy between ids.");
             throw new RuntimeException("Discrepancy between ids");
         }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException("Book has not been found!"));
@@ -174,8 +177,9 @@ public class BookService {
     }
 
     public BookResponse updatePublisher(int id, UpdatePublisherRequest request) {
-
+        logger.info("Update publisher method.");
         if (id != request.getId()) {
+            logger.error("Discrepancy between ids.");
             throw new RuntimeException("Discrepancy between ids");
         }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
@@ -189,12 +193,14 @@ public class BookService {
     }
 
     public BookResponse updateAmount(int id, UpdateAmountRequest request) {
-
+        logger.info("Update amount method.");
         if (id != request.getId()) {
+            logger.error("Discrepancy between ids.");
             throw new RuntimeException("Discrepancy between ids");
         }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));
         if (book.getStatus() != Status.ACTIVE) {
+            logger.error("This book is not active.");
             throw new BookInactiveException("This book is not active!");
         }
         book.setAmount(request.getAmount());
@@ -204,8 +210,10 @@ public class BookService {
     }
 
     public BookResponse deactivateBook(int id, UpdateStatusRequest request) {
-
+        logger.info("Deactivate book method.");
         if (id != request.getId()) {
+            logger.error("Discrepancy between ids.");
+
             throw new RuntimeException("Discrepancy between ids");
         }
         Book book = bookDAO.findById(id).orElseThrow(() -> new BookNotFoundException(("Book has not been found!")));

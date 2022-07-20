@@ -10,6 +10,7 @@ public class BookFilterRequest {
     private String title;
     private Short yearFrom;
     private Short yearTo;
-    private String author;
+    private String authorFirstName;
+    private String authorLastName;
     private String status;
 }

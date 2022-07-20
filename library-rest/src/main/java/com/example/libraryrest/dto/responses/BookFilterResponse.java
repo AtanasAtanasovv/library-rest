@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class BookFilterResponse {
 
-    private BookFilterRequest bookFilterRequest;
-    private PaginationRequest paginationRequest;
-    private SortRequest sortRequest;
+    private int page;
+    private int pageSize;
+    private Long filteredElements;
     private List<BookResponse> bookResponses;
 
 }
