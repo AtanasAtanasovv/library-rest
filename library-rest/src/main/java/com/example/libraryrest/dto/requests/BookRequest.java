@@ -3,6 +3,7 @@ package com.example.libraryrest.dto.requests;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -29,6 +30,6 @@ public class BookRequest {
     @NotEmpty
     private List<Integer> genres;
     @NotEmpty
-    private List<AuthorRequest> authors;
+    private List<@Valid AuthorRequest> authors;
     private String language;
 }

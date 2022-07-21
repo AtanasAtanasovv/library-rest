@@ -31,7 +31,7 @@ public class Book {
     private int amount;
     private String title;
     private String isbn;
-    private String year;
+    private Short year;
     private String publisher;
     @Enumerated(EnumType.STRING)
     private Status status;
