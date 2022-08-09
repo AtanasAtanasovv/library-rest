@@ -1,8 +1,5 @@
 package com.example.libraryrest.dto.responses;
 
-import com.example.libraryrest.dto.requests.BookFilterRequest;
-import com.example.libraryrest.dto.requests.PaginationRequest;
-import com.example.libraryrest.dto.requests.SortRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

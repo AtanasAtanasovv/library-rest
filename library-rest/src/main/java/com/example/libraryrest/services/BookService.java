@@ -67,7 +67,7 @@ public class BookService {
         this.deactivationReasonDAO = deactivationReasonDAO;
     }
 
-    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest) {
+    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest) throws NoSuchFieldException {
         logger.info("Get filtered books method.");
         List<Specification<Book>> specifications = new ArrayList<>();
 
@@ -104,6 +104,8 @@ public class BookService {
 
         Pageable pageable;
 
+        filterRequest.getClass().getDeclaredField(sortRequest.getSortField());
+
         switch (sortRequest.getSortDirection()) {
             case "ASCENDING":
                 pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).ascending());
@@ -113,7 +115,7 @@ public class BookService {
                 break;
             default:
                 logger.error("Invalid sort direction.");
-                throw new RuntimeException("Invalid sort direction!");
+                throw new IllegalArgumentException("Invalid sort direction!");
         }
 
         Page<Book> page = bookDAO.findAll(spec, pageable);

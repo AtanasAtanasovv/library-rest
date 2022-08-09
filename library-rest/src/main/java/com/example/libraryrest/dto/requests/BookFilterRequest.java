@@ -3,7 +3,6 @@ package com.example.libraryrest.dto.requests;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
-import java.util.List;
 
 @Data
 public class BookFilterRequest {

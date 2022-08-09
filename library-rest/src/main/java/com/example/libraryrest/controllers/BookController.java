@@ -5,9 +5,9 @@ import com.example.libraryrest.dto.requests.BookRequest;
 import com.example.libraryrest.dto.requests.PaginationRequest;
 import com.example.libraryrest.dto.requests.SortRequest;
 import com.example.libraryrest.dto.requests.UpdateAmountRequest;
+import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.requests.UpdateStatusRequest;
 import com.example.libraryrest.dto.requests.UpdateYearRequest;
-import com.example.libraryrest.dto.requests.UpdatePublisherRequest;
 import com.example.libraryrest.dto.responses.BookFilterResponse;
 import com.example.libraryrest.dto.responses.BookResponse;
 import com.example.libraryrest.models.Student;
@@ -29,7 +29,6 @@ import org.springframework.web.reactive.function.client.WebClient.UriSpec;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 public class BookController {
@@ -50,7 +49,7 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    ResponseEntity<BookFilterResponse> filterBooks (BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest){
+    ResponseEntity<BookFilterResponse> filterBooks (@Valid BookFilterRequest filterRequest,@Valid PaginationRequest paginationRequest, SortRequest sortRequest) throws NoSuchFieldException {
         return ResponseEntity.ok(bookService.getFiltered(filterRequest,paginationRequest,sortRequest));
     }
     @PostMapping("/books")

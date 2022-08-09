@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {BookAlreadyExistsException.class, NoSuchGenreException.class, InvalidDeactivationReasonException.class, BookNotFoundException.class, BookInactiveException.class})
+    @ExceptionHandler(value = {BookAlreadyExistsException.class, NoSuchGenreException.class, InvalidDeactivationReasonException.class, BookNotFoundException.class, BookInactiveException.class,IllegalArgumentException.class})
 
     public ResponseEntity<Object> handleException(RuntimeException exception) {
 

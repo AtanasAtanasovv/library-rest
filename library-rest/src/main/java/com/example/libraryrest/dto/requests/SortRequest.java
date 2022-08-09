@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class SortRequest {
     private String sortField;
-    private String sortDirection;
+    private String sortDirection="ASCENDING";
 }

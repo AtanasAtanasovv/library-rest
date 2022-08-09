@@ -4,7 +4,6 @@ import com.example.libraryrest.enums.Status;
 import com.example.libraryrest.models.DeactivationReason;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.List;
 
