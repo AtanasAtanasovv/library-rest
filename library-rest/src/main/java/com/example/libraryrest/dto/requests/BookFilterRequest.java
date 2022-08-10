@@ -2,6 +2,7 @@ package com.example.libraryrest.dto.requests;
 
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -10,9 +11,9 @@ public class BookFilterRequest {
     private String publisher;
     @Pattern(regexp = "^[A-Z][a-z]*(([-|\\s][A-Z]?)?[a-z]+)*$")
     private String title;
-    @Pattern(regexp = "^1\\d{3}|(20(1[0-9]|2[0-2]|(0[0-9])))$")
+    @Min(0)
     private Short yearFrom;
-    @Pattern(regexp = "^1\\d{3}|(20(1[0-9]|2[0-2]|(0[0-9])))$")
+    @Min(0)
     private Short yearTo;
     @Pattern(regexp = "^[A-Z][a-z]*(?:-[A-Z])?[a-z]*$")
     private String authorFirstName;

@@ -49,7 +49,7 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    ResponseEntity<BookFilterResponse> filterBooks (@Valid BookFilterRequest filterRequest,@Valid PaginationRequest paginationRequest, SortRequest sortRequest) throws NoSuchFieldException {
+    ResponseEntity<BookFilterResponse> filterBooks (@Valid BookFilterRequest filterRequest,@Valid PaginationRequest paginationRequest, SortRequest sortRequest) {
         return ResponseEntity.ok(bookService.getFiltered(filterRequest,paginationRequest,sortRequest));
     }
     @PostMapping("/books")

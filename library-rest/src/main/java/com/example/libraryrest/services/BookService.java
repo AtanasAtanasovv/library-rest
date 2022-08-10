@@ -67,7 +67,7 @@ public class BookService {
         this.deactivationReasonDAO = deactivationReasonDAO;
     }
 
-    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest) throws NoSuchFieldException {
+    public BookFilterResponse getFiltered(BookFilterRequest filterRequest, PaginationRequest paginationRequest, SortRequest sortRequest) {
         logger.info("Get filtered books method.");
         List<Specification<Book>> specifications = new ArrayList<>();
 
@@ -86,10 +86,10 @@ public class BookService {
         if (filterRequest.getYearTo() != null) {
             specifications.add(BookSpecifications.yearTo(filterRequest.getYearTo()));
         }
-        if (filterRequest.getAuthorFirstName()!=null){
+        if (filterRequest.getAuthorFirstName() != null) {
             specifications.add(BookSpecifications.authorName(filterRequest.getAuthorFirstName(), "firstName"));
         }
-        if (filterRequest.getAuthorLastName()!=null){
+        if (filterRequest.getAuthorLastName() != null) {
             specifications.add(BookSpecifications.authorName(filterRequest.getAuthorLastName(), "lastName"));
         }
 
@@ -102,25 +102,9 @@ public class BookService {
             }
         }
 
-        Pageable pageable;
-
-        filterRequest.getClass().getDeclaredField(sortRequest.getSortField());
-
-        switch (sortRequest.getSortDirection()) {
-            case "ASCENDING":
-                pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).ascending());
-                break;
-            case "DESCENDING":
-                pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), Sort.by(sortRequest.getSortField()).descending());
-                break;
-            default:
-                logger.error("Invalid sort direction.");
-                throw new IllegalArgumentException("Invalid sort direction!");
-        }
-
+        Pageable pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getPageSize(), createSort(sortRequest));
         Page<Book> page = bookDAO.findAll(spec, pageable);
         List<BookResponse> bookResponses = page.getContent().stream().map(bookMapper::entityToResponse).toList();
-
         BookFilterResponse bookFilterResponse = new BookFilterResponse(page.getNumber(), page.getSize(), page.getTotalElements(), bookResponses);
 
         return bookFilterResponse;
@@ -227,5 +211,23 @@ public class BookService {
         BookResponse response = bookMapper.entityToResponse(bookDAO.save(book));
 
         return response;
+    }
+    private Sort createSort (SortRequest sortRequest) {
+
+        Sort sort;
+
+        switch (sortRequest.getSortDirection()) {
+            case "ASCENDING":
+                sort = Sort.by(sortRequest.getSortField()).ascending();
+                break;
+            case "DESCENDING":
+                sort = Sort.by(sortRequest.getSortField()).descending();
+                break;
+            default:
+                logger.error("Invalid sort direction.");
+                throw new IllegalArgumentException("Invalid sort direction!");
+        }
+
+        return sort;
     }
 }

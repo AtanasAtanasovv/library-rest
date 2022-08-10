@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SortRequest {
-    private String sortField;
+    private String sortField="id";
     private String sortDirection="ASCENDING";
 }
